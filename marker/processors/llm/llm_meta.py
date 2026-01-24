@@ -70,4 +70,5 @@ class LLMSimpleBlockMetaProcessor(BaseLLMProcessor):
             prompt_data["image"],
             prompt_data["block"],
             prompt_data["schema"],
+            model_override=prompt_data.get("model_override"),
         )

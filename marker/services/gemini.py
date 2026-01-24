@@ -48,6 +48,7 @@ class BaseGeminiService(BaseService):
         response_schema: type[BaseModel],
         max_retries: int | None = None,
         timeout: int | None = None,
+        model_override: str | None = None,
     ):
         if max_retries is None:
             max_retries = self.max_retries
@@ -76,8 +77,9 @@ class BaseGeminiService(BaseService):
                 )
 
             try:
+                model_to_use = model_override or self.gemini_model_name
                 responses = client.models.generate_content(
-                    model=self.gemini_model_name,
+                    model=model_to_use,
                     contents=image_parts
                     + [
                         prompt

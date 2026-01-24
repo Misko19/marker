@@ -27,6 +27,7 @@ class PromptData(TypedDict):
     schema: BaseModel
     page: PageGroup
     additional_data: dict | None
+    model_override: str | None
 
 
 class BlockData(TypedDict):

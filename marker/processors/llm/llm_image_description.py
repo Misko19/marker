@@ -14,6 +14,14 @@ class LLMImageDescriptionProcessor(BaseLLMSimpleBlockProcessor):
         BlockTypes.Figure,
     )
     extract_images: Annotated[bool, "Extract images from the document."] = True
+    generate_image_descriptions: Annotated[
+        bool,
+        "Generate LLM descriptions for images even when extracting images.",
+    ] = False
+    image_description_model: Annotated[
+        str,
+        "Override the Gemini model for image descriptions. Uses default LLM model if not set.",
+    ] = None
     image_description_prompt: Annotated[
         str,
         "The prompt to use for generating image descriptions.",
@@ -41,7 +49,8 @@ In this figure, a bar chart titled "Fruit Preference Survey" is showing the numb
 
     def inference_blocks(self, document: Document) -> List[BlockData]:
         blocks = super().inference_blocks(document)
-        if self.extract_images:
+        # Only skip if extracting images AND not generating descriptions
+        if self.extract_images and not self.generate_image_descriptions:
             return []
         return blocks
 
@@ -61,6 +70,7 @@ In this figure, a bar chart titled "Fruit Preference Survey" is showing the numb
                     "block": block,
                     "schema": ImageSchema,
                     "page": block_data["page"],
+                    "model_override": self.image_description_model,
                 }
             )
 

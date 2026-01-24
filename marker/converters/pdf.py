@@ -192,8 +192,8 @@ class PdfConverter(BaseConverter):
 
     def __call__(self, filepath: str | io.BytesIO):
         with self.filepath_to_str(filepath) as temp_path:
-            document = self.build_document(temp_path)
-            self.page_count = len(document.pages)
+            self.document = self.build_document(temp_path)
+            self.page_count = len(self.document.pages)
             renderer = self.resolve_dependencies(self.renderer)
-            rendered = renderer(document)
+            rendered = renderer(self.document)
         return rendered

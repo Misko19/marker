@@ -167,7 +167,8 @@ def convert_cli(in_folder: str, **kwargs):
 
     # Use GPU context manager for automatic setup/cleanup
     with GPUManager(chunk_idx) as gpu_manager:
-        batch_sizes, workers = get_batch_sizes_worker_counts(gpu_manager, 7)
+        peak_worker_vram = int(os.environ.get("TARGET_VRAM_GB", 7)) or 7
+        batch_sizes, workers = get_batch_sizes_worker_counts(gpu_manager, peak_worker_vram)
 
         # Override workers if specified
         if kwargs["workers"] is not None:

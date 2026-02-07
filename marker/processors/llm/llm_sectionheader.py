@@ -1,5 +1,5 @@
 import json
-from typing import List, Tuple
+from typing import Annotated, List, Tuple
 
 from tqdm import tqdm
 
@@ -15,6 +15,11 @@ logger = get_logger()
 
 
 class LLMSectionHeaderProcessor(BaseLLMComplexBlockProcessor):
+    timeout: Annotated[
+        int,
+        "Timeout in seconds for the section header LLM request. Higher than default since all headers are sent in one batch.",
+    ] = 120
+
     page_prompt = """You're a text correction expert specializing in accurately analyzing complex PDF documents. You will be given a list of all of the section headers from a document, along with their page number and approximate dimensions.  The headers will be formatted like below, and will be presented in order.
 
 ```json
@@ -123,7 +128,8 @@ Section Headers
             "{{section_header_json}}", json.dumps(section_header_json)
         )
         response = self.llm_service(
-            prompt, None, document.pages[0], SectionHeaderSchema
+            prompt, None, document.pages[0], SectionHeaderSchema,
+            timeout=self.timeout,
         )
         logger.debug(f"Got section header reponse from LLM: {response}")
 

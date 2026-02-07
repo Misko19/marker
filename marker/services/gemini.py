@@ -94,8 +94,8 @@ class BaseGeminiService(BaseService):
                     )
                 return json.loads(output)
             except APIError as e:
-                if e.code in [429, 443, 503]:
-                    # Rate limit exceeded
+                if e.code in [429, 443, 503, 504]:
+                    # Rate limit / transient server error
                     if tries == total_tries:
                         # Last attempt failed. Give up
                         logger.error(
